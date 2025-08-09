@@ -11,10 +11,6 @@ if (!defined('ABSPATH')) {
 
 class Price_Converter_Admin
 {
-
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         add_action('admin_menu', array($this, 'add_admin_menu'));
@@ -22,9 +18,6 @@ class Price_Converter_Admin
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     }
 
-    /**
-     * Add admin menu
-     */
     public function add_admin_menu()
     {
         add_submenu_page(
@@ -37,9 +30,6 @@ class Price_Converter_Admin
         );
     }
 
-    /**
-     * Initialize settings
-     */
     public function init_settings()
     {
         register_setting('price_converter_settings', 'price_converter_settings', array($this, 'sanitize_settings'));
@@ -60,38 +50,29 @@ class Price_Converter_Admin
         );
 
         add_settings_field(
-            'currency_from',
-            __('Source Currency', 'price-converter-plugin'),
-            array($this, 'currency_from_callback'),
+            'custom_rates',
+            __('Custom Currency Rates (JSON)', 'price-converter-plugin'),
+            array($this, 'custom_rates_callback'),
             'price_converter_settings',
             'price_converter_general'
         );
 
         add_settings_field(
-            'currency_to',
-            __('Target Currency', 'price-converter-plugin'),
-            array($this, 'currency_to_callback'),
+            'tax_mode',
+            __('Tax Mode', 'price-converter-plugin'),
+            array($this, 'tax_mode_callback'),
             'price_converter_settings',
             'price_converter_general'
         );
 
         add_settings_field(
-            'auto_update',
-            __('Auto Update Prices', 'price-converter-plugin'),
-            array($this, 'auto_update_callback'),
+            'tax_value',
+            __('Tax Value', 'price-converter-plugin'),
+            array($this, 'tax_value_callback'),
             'price_converter_settings',
             'price_converter_general'
         );
 
-        add_settings_field(
-            'update_interval',
-            __('Update Interval', 'price-converter-plugin'),
-            array($this, 'update_interval_callback'),
-            'price_converter_settings',
-            'price_converter_general'
-        );
-
-        // Navasan API section
         add_settings_section(
             'price_converter_navasan',
             __('Navasan Web Service (optional)', 'price-converter-plugin'),
@@ -109,16 +90,13 @@ class Price_Converter_Admin
 
         add_settings_field(
             'navasan_item',
-            __('Item (rate source)', 'price-converter-plugin'),
+            __('Default Item (USD source)', 'price-converter-plugin'),
             array($this, 'navasan_item_callback'),
             'price_converter_settings',
             'price_converter_navasan'
         );
     }
 
-    /**
-     * Enqueue admin scripts
-     */
     public function enqueue_admin_scripts($hook)
     {
         if ($hook === 'woocommerce_page_price-converter-settings' || $hook === 'post.php' || $hook === 'post-new.php') {
@@ -129,7 +107,6 @@ class Price_Converter_Admin
                 PRICE_CONVERTER_PLUGIN_VERSION,
                 true
             );
-
             wp_localize_script('price-converter-admin', 'priceConverterAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('price_converter_nonce'),
@@ -140,7 +117,6 @@ class Price_Converter_Admin
                     'success' => __('Price fetched successfully', 'price-converter-plugin')
                 )
             ));
-
             wp_enqueue_style(
                 'price-converter-admin',
                 PRICE_CONVERTER_PLUGIN_URL . 'assets/css/admin.css',
@@ -150,15 +126,11 @@ class Price_Converter_Admin
         }
     }
 
-    /**
-     * Settings page
-     */
     public function settings_page()
     {
         ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-
             <form method="post" action="options.php">
                 <?php
                 settings_fields('price_converter_settings');
@@ -170,12 +142,9 @@ class Price_Converter_Admin
             <div class="price-converter-test-section">
                 <h2><?php _e('Test Price Fetching', 'price-converter-plugin'); ?></h2>
                 <p><?php _e('Test the price fetching functionality with a URL:', 'price-converter-plugin'); ?></p>
-
                 <table class="form-table">
                     <tr>
-                        <th scope="row">
-                            <label for="test_url"><?php _e('Test URL', 'price-converter-plugin'); ?></label>
-                        </th>
+                        <th scope="row"><label for="test_url"><?php _e('Test URL', 'price-converter-plugin'); ?></label></th>
                         <td>
                             <input type="url" id="test_url" name="test_url" class="regular-text"
                                 placeholder="https://example.com/product-page">
@@ -184,8 +153,8 @@ class Price_Converter_Admin
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row">
-                            <label for="test_selector"><?php _e('CSS Selector (Optional)', 'price-converter-plugin'); ?></label>
+                        <th scope="row"><label
+                                for="test_selector"><?php _e('CSS Selector (Optional)', 'price-converter-plugin'); ?></label>
                         </th>
                         <td>
                             <input type="text" id="test_selector" name="test_selector" class="regular-text"
@@ -196,16 +165,12 @@ class Price_Converter_Admin
                         </td>
                     </tr>
                 </table>
-
                 <p>
-                    <button type="button" id="test_fetch_price" class="button button-secondary">
-                        <?php _e('Test Fetch Price', 'price-converter-plugin'); ?>
-                    </button>
-                    <button type="button" id="test_convert_price" class="button button-secondary" style="display:none;">
-                        <?php _e('Convert to IRT', 'price-converter-plugin'); ?>
-                    </button>
+                    <button type="button" id="test_fetch_price"
+                        class="button button-secondary"><?php _e('Test Fetch Price', 'price-converter-plugin'); ?></button>
+                    <button type="button" id="test_convert_price" class="button button-secondary"
+                        style="display:none;"><?php _e('Convert to IRT', 'price-converter-plugin'); ?></button>
                 </p>
-
                 <div id="test_results" style="display:none;">
                     <h3><?php _e('Test Results', 'price-converter-plugin'); ?></h3>
                     <div id="test_results_content"></div>
@@ -215,9 +180,6 @@ class Price_Converter_Admin
         <?php
     }
 
-    /**
-     * General section callback
-     */
     public function general_section_callback()
     {
         echo '<p>' . __('Configure the price converter settings below.', 'price-converter-plugin') . '</p>';
@@ -225,15 +187,9 @@ class Price_Converter_Admin
 
     public function navasan_section_callback()
     {
-        echo '<p>' . esc_html__(
-            'If you provide a Navasan API Key, the plugin will fetch USD→IRR from their web service and automatically convert it to IRT by removing one zero.',
-            'price-converter-plugin'
-        ) . '</p>';
+        echo '<p>' . esc_html__('If you provide a Navasan API Key, the plugin will fetch USD→IRR (and others) and convert to IRT by removing one zero.', 'price-converter-plugin') . '</p>';
     }
 
-    /**
-     * Exchange rate callback
-     */
     public function exchange_rate_callback()
     {
         $options = get_option('price_converter_settings');
@@ -241,86 +197,53 @@ class Price_Converter_Admin
         ?>
         <input type="number" step="0.01" min="0" name="price_converter_settings[exchange_rate]"
             value="<?php echo esc_attr($value); ?>" class="regular-text" />
+        <p class="description"><?php _e('Fallback USD→IRT when API/rates are unavailable.', 'price-converter-plugin'); ?></p>
+        <?php
+    }
+
+    public function custom_rates_callback()
+    {
+        $options = get_option('price_converter_settings');
+        $value = isset($options['custom_rates']) ? $options['custom_rates'] : '';
+        ?>
+        <textarea name="price_converter_settings[custom_rates]" rows="6" class="large-text"
+            placeholder='{"EUR":60000,"GBP":70000,"AED":15000}'><?php echo esc_textarea($value); ?></textarea>
         <p class="description">
-            <?php _e('Fallback exchange rate from USD to Iranian Toman (IRT) when API is not configured or unavailable.', 'price-converter-plugin'); ?>
+            <?php _e('JSON map of per-currency rates to IRT, used when API does not provide that currency.', 'price-converter-plugin'); ?>
         </p>
         <?php
     }
 
-    /**
-     * Currency from callback
-     */
-    public function currency_from_callback()
+    public function tax_mode_callback()
     {
         $options = get_option('price_converter_settings');
-        $value = isset($options['currency_from']) ? $options['currency_from'] : 'USD';
+        $value = isset($options['tax_mode']) ? $options['tax_mode'] : 'none';
         ?>
-        <select name="price_converter_settings[currency_from]">
-            <option value="USD" <?php selected($value, 'USD'); ?>><?php _e('US Dollar (USD)', 'price-converter-plugin'); ?>
+        <select name="price_converter_settings[tax_mode]">
+            <option value="none" <?php selected($value, 'none'); ?>><?php _e('None', 'price-converter-plugin'); ?></option>
+            <option value="percent" <?php selected($value, 'percent'); ?>><?php _e('Percent', 'price-converter-plugin'); ?>
             </option>
-            <option value="EUR" <?php selected($value, 'EUR'); ?>><?php _e('Euro (EUR)', 'price-converter-plugin'); ?></option>
-            <option value="GBP" <?php selected($value, 'GBP'); ?>><?php _e('British Pound (GBP)', 'price-converter-plugin'); ?>
-            </option>
-            <option value="CAD" <?php selected($value, 'CAD'); ?>>
-                <?php _e('Canadian Dollar (CAD)', 'price-converter-plugin'); ?>
-            </option>
-            <option value="AUD" <?php selected($value, 'AUD'); ?>>
-                <?php _e('Australian Dollar (AUD)', 'price-converter-plugin'); ?>
+            <option value="fixed" <?php selected($value, 'fixed'); ?>>
+                <?php _e('Fixed Amount (IRT)', 'price-converter-plugin'); ?>
             </option>
         </select>
+        <p class="description"><?php _e('Select tax mode to apply on converted prices.', 'price-converter-plugin'); ?></p>
         <?php
     }
 
-    /**
-     * Currency to callback
-     */
-    public function currency_to_callback()
+    public function tax_value_callback()
     {
         $options = get_option('price_converter_settings');
-        $value = isset($options['currency_to']) ? $options['currency_to'] : 'IRT';
+        $value = isset($options['tax_value']) ? $options['tax_value'] : 0;
         ?>
-        <input type="text" name="price_converter_settings[currency_to]" value="<?php echo esc_attr($value); ?>"
-            class="regular-text" readonly />
-        <p class="description"><?php _e('Target currency (Iranian Toman - IRT)', 'price-converter-plugin'); ?></p>
+        <input type="number" step="0.01" min="0" name="price_converter_settings[tax_value]"
+            value="<?php echo esc_attr($value); ?>" class="regular-text" />
+        <p class="description">
+            <?php _e('If Percent mode: value is percentage. If Fixed mode: value is IRT amount.', 'price-converter-plugin'); ?>
+        </p>
         <?php
     }
 
-    /**
-     * Auto update callback
-     */
-    public function auto_update_callback()
-    {
-        $options = get_option('price_converter_settings');
-        $value = isset($options['auto_update']) ? $options['auto_update'] : false;
-        ?>
-        <label>
-            <input type="checkbox" name="price_converter_settings[auto_update]" value="1" <?php checked($value, 1); ?> />
-            <?php _e('Enable automatic price updates', 'price-converter-plugin'); ?>
-        </label>
-        <?php
-    }
-
-    /**
-     * Update interval callback
-     */
-    public function update_interval_callback()
-    {
-        $options = get_option('price_converter_settings');
-        $value = isset($options['update_interval']) ? $options['update_interval'] : 'daily';
-        ?>
-        <select name="price_converter_settings[update_interval]">
-            <option value="hourly" <?php selected($value, 'hourly'); ?>><?php _e('Hourly', 'price-converter-plugin'); ?>
-            </option>
-            <option value="daily" <?php selected($value, 'daily'); ?>><?php _e('Daily', 'price-converter-plugin'); ?></option>
-            <option value="weekly" <?php selected($value, 'weekly'); ?>><?php _e('Weekly', 'price-converter-plugin'); ?>
-            </option>
-        </select>
-        <?php
-    }
-
-    /**
-     * Navasan API key field
-     */
     public function navasan_api_key_callback()
     {
         $options = get_option('price_converter_settings');
@@ -329,14 +252,11 @@ class Price_Converter_Admin
         <input type="text" name="price_converter_settings[navasan_api_key]" value="<?php echo esc_attr($value); ?>"
             class="regular-text" />
         <p class="description">
-            <?php _e('Enter your Navasan API Key. If set, USD→IRR will be fetched from Navasan and then converted to IRT (divide by 10).', 'price-converter-plugin'); ?>
+            <?php _e('Enter your Navasan API Key. If set, rates are fetched automatically.', 'price-converter-plugin'); ?>
         </p>
         <?php
     }
 
-    /**
-     * Navasan item field
-     */
     public function navasan_item_callback()
     {
         $options = get_option('price_converter_settings');
@@ -354,45 +274,32 @@ class Price_Converter_Admin
                 </option>
             <?php endforeach; ?>
         </select>
-        <p class="description"><?php _e('Choose which USD rate to use from Navasan.', 'price-converter-plugin'); ?></p>
+        <p class="description"><?php _e('Default USD item to use when mapping fails.', 'price-converter-plugin'); ?></p>
         <?php
     }
 
-    /**
-     * Sanitize settings
-     */
     public function sanitize_settings($input)
     {
         $sanitized = array();
-
         if (isset($input['exchange_rate'])) {
             $sanitized['exchange_rate'] = floatval($input['exchange_rate']);
         }
-
-        if (isset($input['currency_from'])) {
-            $sanitized['currency_from'] = sanitize_text_field($input['currency_from']);
+        if (isset($input['custom_rates'])) {
+            $sanitized['custom_rates'] = wp_kses_post($input['custom_rates']);
         }
-
-        if (isset($input['currency_to'])) {
-            $sanitized['currency_to'] = sanitize_text_field($input['currency_to']);
+        if (isset($input['tax_mode'])) {
+            $mode = in_array($input['tax_mode'], array('none', 'percent', 'fixed'), true) ? $input['tax_mode'] : 'none';
+            $sanitized['tax_mode'] = $mode;
         }
-
-        if (isset($input['auto_update'])) {
-            $sanitized['auto_update'] = (bool) $input['auto_update'];
+        if (isset($input['tax_value'])) {
+            $sanitized['tax_value'] = floatval($input['tax_value']);
         }
-
-        if (isset($input['update_interval'])) {
-            $sanitized['update_interval'] = sanitize_text_field($input['update_interval']);
-        }
-
         if (isset($input['navasan_api_key'])) {
             $sanitized['navasan_api_key'] = sanitize_text_field($input['navasan_api_key']);
         }
-
         if (isset($input['navasan_item'])) {
             $sanitized['navasan_item'] = sanitize_text_field($input['navasan_item']);
         }
-
         return $sanitized;
     }
 }

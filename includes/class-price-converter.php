@@ -11,6 +11,10 @@ if (!defined('ABSPATH')) {
 
 class Price_Converter
 {
+    /**
+     * Cached latest rates from Navasan (decoded array)
+     */
+    private $latest_rates_cache = null;
 
     /**
      * Constructor
@@ -151,97 +155,139 @@ class Price_Converter
     }
 
     /**
-     * Get USD->IRT exchange rate using Navasan API when configured.
-     * Logic: Fetch USD->IRR using the web service, then divide by 10 to get IRT.
-     * Result is cached in a transient to reduce API calls.
+     * Fetch latest rates JSON from Navasan once and cache in transient
      */
-    public function get_usd_to_irt_rate()
+    private function fetch_latest_rates()
     {
+        if ($this->latest_rates_cache !== null) {
+            return $this->latest_rates_cache;
+        }
         $settings = get_option('price_converter_settings', array());
         $api_key = isset($settings['navasan_api_key']) ? trim($settings['navasan_api_key']) : '';
-        $item = isset($settings['navasan_item']) && $settings['navasan_item'] ? $settings['navasan_item'] : 'usd_sell';
-
-        // If no API key, fall back to manual exchange_rate (already USD->IRT)
         if (empty($api_key)) {
-            return isset($settings['exchange_rate']) ? floatval($settings['exchange_rate']) : 1.0;
+            $this->latest_rates_cache = array();
+            return $this->latest_rates_cache;
         }
 
-        $cached = get_transient('price_converter_usd_to_irt');
+        $cached = get_transient('price_converter_latest_rates');
         if ($cached) {
-            return floatval($cached);
+            $this->latest_rates_cache = $cached;
+            return $this->latest_rates_cache;
         }
 
         $url = add_query_arg(
             array(
                 'api_key' => rawurlencode($api_key),
-                'item' => $item,
             ),
             'http://api.navasan.tech/latest/'
         );
-
         $response = wp_remote_get($url, array('timeout' => 20));
-        if (is_wp_error($response)) {
-            return isset($settings['exchange_rate']) ? floatval($settings['exchange_rate']) : 1.0;
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+            $this->latest_rates_cache = array();
+            return $this->latest_rates_cache;
         }
-
-        $code = wp_remote_retrieve_response_code($response);
-        if ($code !== 200) {
-            return isset($settings['exchange_rate']) ? floatval($settings['exchange_rate']) : 1.0;
-        }
-
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
-
-        $irr_value = null;
-        if (is_array($data)) {
-            if (isset($data['value'])) {
-                $irr_value = $data['value'];
-            }
-            if ($irr_value === null && isset($data[$item]) && isset($data[$item]['value'])) {
-                $irr_value = $data[$item]['value'];
-            }
+        if (!is_array($data)) {
+            $data = array();
         }
+        set_transient('price_converter_latest_rates', $data, 120); // 2 minutes
+        $this->latest_rates_cache = $data;
+        return $this->latest_rates_cache;
+    }
 
-        if ($irr_value === null) {
-            return isset($settings['exchange_rate']) ? floatval($settings['exchange_rate']) : 1.0;
+    /**
+     * Candidate item keys for a currency
+     */
+    private function get_item_candidates_for_currency($currency)
+    {
+        $c = strtolower(trim($currency));
+        $map = array(
+            'usd' => array('usd_sell', 'usd'),
+            'eur' => array('eur_sell', 'eur'),
+            'gbp' => array('gbp_sell', 'gbp'),
+            'aed' => array('aed_sell', 'dirham_dubai', 'aed'),
+            'try' => array('try'),
+            'cny' => array('cny'),
+            'jpy' => array('jpy'),
+            'rub' => array('rub'),
+            // fallbacks default to the code itself
+        );
+        if (isset($map[$c])) {
+            return $map[$c];
         }
+        return array($c);
+    }
 
-        $irr = floatval(str_replace(',', '', (string) $irr_value));
-        if ($irr <= 0) {
-            return isset($settings['exchange_rate']) ? floatval($settings['exchange_rate']) : 1.0;
-        }
-
-        $irt = round($irr / 10, 0);
-
-        set_transient('price_converter_usd_to_irt', $irt, 10 * MINUTE_IN_SECONDS);
-
-        return floatval($irt);
+    /**
+     * Get USD->IRT exchange rate using get_currency_to_irt_rate for compatibility
+     */
+    public function get_usd_to_irt_rate()
+    {
+        return $this->get_currency_to_irt_rate('USD');
     }
 
     /**
      * Resolve currency->IRT rate.
-     * - If USD: use Navasan or fallback USD->IRT setting
-     * - Else: use custom_rates JSON from settings if provided (per 1 unit -> IRT)
+     * - IRR: 0.1
+     * - IRT: 1
+     * - If API configured: read latest rates; pick candidate; value is IRR per unit -> divide by 10
+     * - Else: fallback to settings: exchange_rate (USD->IRT) or custom_rates JSON
      */
     public function get_currency_to_irt_rate($currency)
     {
         $code = strtoupper(trim((string) $currency));
-        if ($code === 'USD' || $code === '') {
-            return $this->get_usd_to_irt_rate();
+        if ($code === 'IRT') {
+            return 1.0;
         }
+        if ($code === 'IRR') {
+            return 0.1;
+        }
+
         $settings = get_option('price_converter_settings', array());
-        $custom = isset($settings['custom_rates']) ? $settings['custom_rates'] : '';
-        if (!empty($custom)) {
-            $map = json_decode($custom, true);
-            if (is_array($map) && isset($map[$code])) {
-                $rate = floatval($map[$code]);
-                if ($rate > 0) {
-                    return $rate;
+        $api_key = isset($settings['navasan_api_key']) ? trim($settings['navasan_api_key']) : '';
+
+        if (!empty($api_key)) {
+            $latest = $this->fetch_latest_rates();
+            if (!empty($latest)) {
+                $candidates = $this->get_item_candidates_for_currency($code);
+                foreach ($candidates as $item) {
+                    if (isset($latest[$item]) && isset($latest[$item]['value'])) {
+                        $irr_value = $latest[$item]['value'];
+                        $irr = floatval(str_replace(',', '', (string) $irr_value));
+                        if ($irr > 0) {
+                            return round($irr / 10, 6);
+                        }
+                    }
                 }
             }
         }
-        // Fallback: treat as USD if unknown
-        return $this->get_usd_to_irt_rate();
+
+        // Custom per-currency rates JSON (direct IRT per unit)
+        if (isset($settings['custom_rates']) && !empty($settings['custom_rates'])) {
+            $map = json_decode($settings['custom_rates'], true);
+            if (is_array($map) && isset($map[$code]) && floatval($map[$code]) > 0) {
+                return floatval($map[$code]);
+            }
+        }
+
+        // Fallback to USD rate
+        $usd_rate = isset($settings['exchange_rate']) ? floatval($settings['exchange_rate']) : 1.0;
+        return $usd_rate;
+    }
+
+    private function apply_tax_to_irt($amount_irt)
+    {
+        $settings = get_option('price_converter_settings', array());
+        $mode = isset($settings['tax_mode']) ? $settings['tax_mode'] : 'none';
+        $value = isset($settings['tax_value']) ? floatval($settings['tax_value']) : 0.0;
+        $amount = floatval($amount_irt);
+        if ($mode === 'percent' && $value !== 0.0) {
+            $amount = $amount * (1 + ($value / 100));
+        } elseif ($mode === 'fixed' && $value !== 0.0) {
+            $amount = $amount + $value;
+        }
+        return $amount;
     }
 
     /**
@@ -251,6 +297,7 @@ class Price_Converter
     {
         $rate_irt = $this->get_currency_to_irt_rate($currency);
         $converted_price = floatval($amount) * $rate_irt;
+        $converted_price = $this->apply_tax_to_irt($converted_price);
         return round($converted_price, 0);
     }
 
