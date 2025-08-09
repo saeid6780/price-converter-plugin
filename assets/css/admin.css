@@ -1,0 +1,162 @@
+/* Price Converter Plugin Admin Styles */
+
+.price-converter-meta-box {
+    padding: 10px 0;
+}
+
+.price-converter-meta-box label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.price-converter-meta-box input[type="url"],
+.price-converter-meta-box input[type="text"] {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.price-converter-meta-box .button {
+    margin-right: 10px;
+}
+
+.price-converter-results {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 3px;
+}
+
+.price-converter-results p {
+    margin: 5px 0;
+}
+
+.price-converter-results strong {
+    color: #23282d;
+}
+
+.price-converter-test-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 3px;
+}
+
+.price-converter-test-section h2 {
+    margin-top: 0;
+    color: #23282d;
+}
+
+.price-converter-test-section .form-table th {
+    width: 200px;
+}
+
+.price-converter-test-section .button {
+    margin-right: 10px;
+}
+
+#test_results {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+#test_results h3 {
+    margin-top: 0;
+    color: #23282d;
+}
+
+/* WooCommerce Product Data Panel Styles */
+#price_converter_product_data .options_group {
+    padding: 20px;
+}
+
+#price_converter_product_data h3 {
+    margin-top: 0;
+    color: #23282d;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.price-converter-actions {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.price-converter-results-tab {
+    margin-top: 15px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.price-converter-results-tab p {
+    margin: 5px 0;
+}
+
+.price-converter-results-tab strong {
+    color: #23282d;
+}
+
+/* Spinner styles */
+.spinner {
+    float: none;
+    margin-top: 0;
+    margin-left: 10px;
+}
+
+.spinner.is-active {
+    visibility: visible;
+}
+
+/* Message styles */
+#price_converter_message,
+#price_converter_message_tab {
+    margin-top: 10px;
+}
+
+#price_converter_message .notice,
+#price_converter_message_tab .notice {
+    margin: 0;
+}
+
+/* Button states */
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form validation */
+.price-converter-meta-box input:invalid {
+    border-color: #dc3232;
+}
+
+.price-converter-meta-box input:valid {
+    border-color: #46b450;
+}
+
+/* Responsive design */
+@media (max-width: 782px) {
+    .price-converter-meta-box input[type="url"],
+    .price-converter-meta-box input[type="text"] {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .price-converter-test-section .form-table th {
+        width: 100%;
+        display: block;
+    }
+    
+    .price-converter-test-section .form-table td {
+        display: block;
+        padding-left: 0;
+    }
+}
