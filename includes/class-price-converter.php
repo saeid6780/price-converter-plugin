@@ -100,7 +100,25 @@ class Price_Converter
             }
         }
 
-        // Common price patterns
+        // Try to find prices with data-qa attributes first (priority)
+        $data_qa_patterns = array(
+            '/<[^>]*data-qa=["\'][^"\']*price[^"\']*["\'][^>]*>([^<]+)<\/[^>]*>/i',
+            '/<[^>]*data-qa=["\'][^"\']*amount[^"\']*["\'][^>]*>([^<]+)<\/[^>]*>/i',
+            '/<[^>]*data-qa=["\'][^"\']*value[^"\']*["\'][^>]*>([^<]+)<\/[^>]*>/i',
+            '/<[^>]*data-qa=["\'][^"\']*cost[^"\']*["\'][^>]*>([^<]+)<\/[^>]*>/i',
+        );
+
+        foreach ($data_qa_patterns as $pattern) {
+            if (preg_match($pattern, $content, $matches)) {
+                $price_text = trim($matches[1]);
+                $price = $this->extract_numeric_price($price_text);
+                if ($price !== false) {
+                    return $price;
+                }
+            }
+        }
+
+        // Common price patterns (fallback)
         $patterns = array(
             // USD patterns
             '/\$(\d+(?:,\d{3})*(?:\.\d{2})?)/',
@@ -127,11 +145,38 @@ class Price_Converter
     }
 
     /**
+     * Extract numeric price from text
+     */
+    private function extract_numeric_price($text)
+    {
+        // Remove common non-numeric characters but keep decimal points
+        $cleaned = preg_replace('/[^\d.,]/', '', $text);
+
+        // Handle different number formats
+        if (preg_match('/(\d+(?:,\d{3})*(?:\.\d{2})?)/', $cleaned, $matches)) {
+            $price = str_replace(',', '', $matches[1]);
+            $price = floatval($price);
+            return $price > 0 ? $price : false;
+        }
+
+        return false;
+    }
+
+    /**
      * Extract price using CSS selector
      */
     private function extract_price_by_selector($content, $selector)
     {
-        // Simple implementation - in production, use a proper DOM parser
+        // Handle data-qa selectors specifically
+        if (strpos($selector, 'data-qa') !== false) {
+            $pattern = '/<[^>]*data-qa=["\']' . preg_quote($selector, '/') . '["\'][^>]*>([^<]+)<\/[^>]*>/i';
+            if (preg_match($pattern, $content, $matches)) {
+                $price_text = trim($matches[1]);
+                return $this->extract_numeric_price($price_text);
+            }
+        }
+
+        // Handle class selectors
         if (strpos($selector, '.') === 0) {
             $class = substr($selector, 1);
             $pattern = '/<[^>]*class=["\'][^"\']*' . preg_quote($class, '/') . '[^"\']*["\'][^>]*>([^<]+)<\/[^>]*>/i';
@@ -144,11 +189,7 @@ class Price_Converter
 
         if (preg_match($pattern, $content, $matches)) {
             $price_text = trim($matches[1]);
-            // Extract numeric value
-            if (preg_match('/(\d+(?:,\d{3})*(?:\.\d{2})?)/', $price_text, $price_matches)) {
-                $price = str_replace(',', '', $price_matches[1]);
-                return floatval($price);
-            }
+            return $this->extract_numeric_price($price_text);
         }
 
         return false;
@@ -256,7 +297,7 @@ class Price_Converter
                         $irr_value = $latest[$item]['value'];
                         $irr = floatval(str_replace(',', '', (string) $irr_value));
                         if ($irr > 0) {
-                            return round($irr / 10, 6);
+                            return round($irr, 6); // Remove division by 10 to preserve Toman value
                         }
                     }
                 }
@@ -271,23 +312,52 @@ class Price_Converter
             }
         }
 
+        // Custom currencies fallback (new feature)
+        if (isset($settings['custom_currencies']) && !empty($settings['custom_currencies'])) {
+            $customCurrencies = json_decode($settings['custom_currencies'], true);
+            if (is_array($customCurrencies) && isset($customCurrencies[$code]) && floatval($customCurrencies[$code]) > 0) {
+                return floatval($customCurrencies[$code]);
+            }
+        }
+
         // Fallback to USD rate
         $usd_rate = isset($settings['exchange_rate']) ? floatval($settings['exchange_rate']) : 1.0;
         return $usd_rate;
     }
 
-    private function apply_tax_to_irt($amount_irt)
+    private function apply_interest($amount_irt)
     {
-        $settings = get_option('price_converter_settings', array());
-        $mode = isset($settings['tax_mode']) ? $settings['tax_mode'] : 'none';
-        $value = isset($settings['tax_value']) ? floatval($settings['tax_value']) : 0.0;
-        $amount = floatval($amount_irt);
-        if ($mode === 'percent' && $value !== 0.0) {
-            $amount = $amount * (1 + ($value / 100));
-        } elseif ($mode === 'fixed' && $value !== 0.0) {
-            $amount = $amount + $value;
+        try {
+            $settings = get_option('price_converter_settings', array());
+            $mode = isset($settings['interest_mode']) ? $settings['interest_mode'] : 'none';
+            $value = isset($settings['interest_value']) ? floatval($settings['interest_value']) : 0.0;
+            $amount = floatval($amount_irt);
+
+            if ($amount <= 0) {
+                return $amount;
+            }
+
+            switch ($mode) {
+                case 'percent':
+                    if ($value > 0) {
+                        $interest = $amount * ($value / 100);
+                        return max(0, $amount + $interest);
+                    }
+                    break;
+                case 'fixed':
+                    if ($value > 0) {
+                        return max(0, $amount + $value);
+                    }
+                    break;
+                default:
+                    return $amount;
+            }
+
+            return $amount;
+        } catch (Exception $e) {
+            error_log('Price Converter Error in apply_interest: ' . $e->getMessage());
+            return $amount_irt; // Return original amount on error
         }
-        return $amount;
     }
 
     /**
@@ -297,7 +367,7 @@ class Price_Converter
     {
         $rate_irt = $this->get_currency_to_irt_rate($currency);
         $converted_price = floatval($amount) * $rate_irt;
-        $converted_price = $this->apply_tax_to_irt($converted_price);
+        $converted_price = $this->apply_interest($converted_price);
         return round($converted_price, 0);
     }
 
