@@ -112,7 +112,6 @@ class Price_Converter_Admin
             'price_converter_general'
         );
 
-        // Add fallback mode setting
         add_settings_field(
             'fallback_mode',
             __('Fallback Mode', 'price-converter-plugin'),
@@ -556,7 +555,6 @@ class Price_Converter_Admin
         $options = get_option('price_converter_settings');
         $value = isset($options['custom_currencies']) ? $options['custom_currencies'] : '';
 
-        // Show current custom currencies in a readable format
         if (!empty($value)) {
             try {
                 $decoded = json_decode($value, true);
@@ -801,7 +799,8 @@ class Price_Converter_Admin
             <option value="percent" <?php selected($value, 'percent'); ?>><?php _e('Percent', 'price-converter-plugin'); ?>
             </option>
             <option value="fixed" <?php selected($value, 'fixed'); ?>>
-                <?php _e('Fixed Amount (IRT)', 'price-converter-plugin'); ?></option>
+                <?php _e('Fixed Amount (IRT)', 'price-converter-plugin'); ?>
+            </option>
         </select>
         <p class="description"><?php _e('Select interest mode to apply on converted prices.', 'price-converter-plugin'); ?></p>
         <?php
@@ -826,17 +825,22 @@ class Price_Converter_Admin
         $value = isset($options['price_interval']) ? $options['price_interval'] : 'daily';
         ?>
         <select name="price_converter_settings[price_interval]">
-            <option value="30min" <?php selected($value, '30min'); ?>><?php _e('30 Minutes', 'price-converter-plugin'); ?></option>
+            <option value="30min" <?php selected($value, '30min'); ?>><?php _e('30 Minutes', 'price-converter-plugin'); ?>
+            </option>
             <option value="1hour" <?php selected($value, '1hour'); ?>><?php _e('1 Hour', 'price-converter-plugin'); ?></option>
             <option value="2hour" <?php selected($value, '2hour'); ?>><?php _e('2 Hours', 'price-converter-plugin'); ?></option>
             <option value="4hour" <?php selected($value, '4hour'); ?>><?php _e('4 Hours', 'price-converter-plugin'); ?></option>
             <option value="6hour" <?php selected($value, '6hour'); ?>><?php _e('6 Hours', 'price-converter-plugin'); ?></option>
-            <option value="12hour" <?php selected($value, '12hour'); ?>><?php _e('12 Hours', 'price-converter-plugin'); ?></option>
+            <option value="12hour" <?php selected($value, '12hour'); ?>><?php _e('12 Hours', 'price-converter-plugin'); ?>
+            </option>
             <option value="daily" <?php selected($value, 'daily'); ?>><?php _e('Daily', 'price-converter-plugin'); ?></option>
-            <option value="weekly" <?php selected($value, 'weekly'); ?>><?php _e('Weekly', 'price-converter-plugin'); ?></option>
-            <option value="monthly" <?php selected($value, 'monthly'); ?>><?php _e('Monthly', 'price-converter-plugin'); ?></option>
+            <option value="weekly" <?php selected($value, 'weekly'); ?>><?php _e('Weekly', 'price-converter-plugin'); ?>
+            </option>
+            <option value="monthly" <?php selected($value, 'monthly'); ?>><?php _e('Monthly', 'price-converter-plugin'); ?>
+            </option>
         </select>
-        <p class="description"><?php _e('Select how often prices should be updated from external sources.', 'price-converter-plugin'); ?></p>
+        <p class="description">
+            <?php _e('Select how often prices should be updated from external sources.', 'price-converter-plugin'); ?></p>
         <?php
     }
 
@@ -871,7 +875,6 @@ class Price_Converter_Admin
         if (isset($input['custom_currencies'])) {
             $custom_currencies = trim($input['custom_currencies']);
             if (!empty($custom_currencies)) {
-                // Validate JSON format
                 $decoded = json_decode($custom_currencies, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     add_settings_error(
@@ -881,7 +884,6 @@ class Price_Converter_Admin
                     );
                     $sanitized['custom_currencies'] = '';
                 } else {
-                    // Validate currency codes and rates
                     $valid_currencies = array();
                     foreach ($decoded as $code => $rate) {
                         if (is_string($code) && !empty($code) && is_numeric($rate) && $rate > 0) {
@@ -911,5 +913,45 @@ class Price_Converter_Admin
             $sanitized['fallback_mode'] = in_array($input['fallback_mode'], array('enabled', 'disabled'), true) ? $input['fallback_mode'] : 'enabled';
         }
         return $sanitized;
+    }
+
+    public function navasan_api_key_callback()
+    {
+        $options = get_option('price_converter_settings');
+        $value = isset($options['navasan_api_key']) ? $options['navasan_api_key'] : '';
+        ?>
+        <input type="text" name="price_converter_settings[navasan_api_key]" value="<?php echo esc_attr($value); ?>"
+            class="regular-text" />
+        <p class="description">
+            <?php _e('Enter your Navasan API key for real-time exchange rates.', 'price-converter-plugin'); ?></p>
+        <?php
+    }
+
+    public function navasan_item_callback()
+    {
+        $options = get_option('price_converter_settings');
+        $value = isset($options['navasan_item']) ? $options['navasan_item'] : '';
+        ?>
+        <input type="text" name="price_converter_settings[navasan_item]" value="<?php echo esc_attr($value); ?>"
+            class="regular-text" />
+        <p class="description"><?php _e('Enter the default item for USD source (e.g., "usd").', 'price-converter-plugin'); ?>
+        </p>
+        <?php
+    }
+
+    public function fallback_mode_callback()
+    {
+        $options = get_option('price_converter_settings');
+        $value = isset($options['fallback_mode']) ? $options['fallback_mode'] : 'enabled';
+        ?>
+        <select name="price_converter_settings[fallback_mode]">
+            <option value="enabled" <?php selected($value, 'enabled'); ?>><?php _e('Enabled', 'price-converter-plugin'); ?>
+            </option>
+            <option value="disabled" <?php selected($value, 'disabled'); ?>><?php _e('Disabled', 'price-converter-plugin'); ?>
+            </option>
+        </select>
+        <p class="description"><?php _e('Enable or disable fallback mode for price conversion.', 'price-converter-plugin'); ?>
+        </p>
+        <?php
     }
 }
