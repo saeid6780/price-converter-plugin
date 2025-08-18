@@ -325,16 +325,24 @@ class Price_Converter
         return $usd_rate;
     }
 
-    private function apply_interest($amount_irt)
+    private function apply_interest($amount_irt, $product_id = null, $interest_mode = null, $interest_value = null)
     {
         try {
-            $settings = get_option('price_converter_settings', array());
-            $mode = isset($settings['interest_mode']) ? $settings['interest_mode'] : 'none';
-            $value = isset($settings['interest_value']) ? floatval($settings['interest_value']) : 0.0;
             $amount = floatval($amount_irt);
 
             if ($amount <= 0) {
                 return $amount;
+            }
+
+            // If product-specific settings are provided, use them
+            if ($product_id && $interest_mode !== null && $interest_value !== null) {
+                $mode = $interest_mode;
+                $value = floatval($interest_value);
+            } else {
+                // Fall back to general settings
+                $settings = get_option('price_converter_settings', array());
+                $mode = isset($settings['interest_mode']) ? $settings['interest_mode'] : 'none';
+                $value = isset($settings['interest_value']) ? floatval($settings['interest_value']) : 0.0;
             }
 
             switch ($mode) {
@@ -347,6 +355,26 @@ class Price_Converter
                 case 'fixed':
                     if ($value > 0) {
                         return max(0, $amount + $value);
+                    }
+                    break;
+                case 'inherit':
+                    // For inherit mode, fall back to general settings
+                    $settings = get_option('price_converter_settings', array());
+                    $mode = isset($settings['interest_mode']) ? $settings['interest_mode'] : 'none';
+                    $value = isset($settings['interest_value']) ? floatval($settings['interest_value']) : 0.0;
+
+                    switch ($mode) {
+                        case 'percent':
+                            if ($value > 0) {
+                                $interest = $amount * ($value / 100);
+                                return max(0, $amount + $interest);
+                            }
+                            break;
+                        case 'fixed':
+                            if ($value > 0) {
+                                return max(0, $amount + $value);
+                            }
+                            break;
                     }
                     break;
                 default:
@@ -377,6 +405,17 @@ class Price_Converter
     public function convert_to_toman($priceUsd)
     {
         return $this->convert_to_toman_from_currency($priceUsd, 'USD');
+    }
+
+    /**
+     * Convert amount to Iranian Toman (IRT) from a given currency with custom interest
+     */
+    public function convert_to_toman_from_currency_with_interest($amount, $currency, $interest_mode, $interest_value)
+    {
+        $rate_irt = $this->get_currency_to_irt_rate($currency);
+        $converted_price = floatval($amount) * $rate_irt;
+        $converted_price = $this->apply_interest($converted_price, null, $interest_mode, $interest_value);
+        return round($converted_price, 0);
     }
 
     /**
@@ -423,7 +462,17 @@ class Price_Converter
         $price = floatval($_POST['price']);
         $currency = isset($_POST['currency']) ? sanitize_text_field($_POST['currency']) : 'USD';
 
-        $converted_price = $this->convert_to_toman_from_currency($price, $currency);
+        // Handle custom interest settings if provided
+        $interest_mode = isset($_POST['interest_mode']) ? sanitize_text_field($_POST['interest_mode']) : null;
+        $interest_value = isset($_POST['interest_value']) ? floatval($_POST['interest_value']) : null;
+
+        if ($interest_mode && $interest_value !== null) {
+            // Use custom interest settings
+            $converted_price = $this->convert_to_toman_from_currency_with_interest($price, $currency, $interest_mode, $interest_value);
+        } else {
+            // Use default conversion
+            $converted_price = $this->convert_to_toman_from_currency($price, $currency);
+        }
 
         wp_send_json_success(array(
             'original_price' => $price,

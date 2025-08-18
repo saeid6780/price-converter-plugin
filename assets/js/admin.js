@@ -127,4 +127,89 @@ jQuery(document).ready(function ($) {
     });
 
     // Note: Pricing tab JS is now inline within WooCommerce pricing UI output
+
+    // Variation-specific functionality
+    $(document).on('click', '.pc_fetch_price_variation', function () {
+        var loop = $(this).data('loop');
+        var url = $('#price_converter_source_url_' + loop).val();
+        var selector = $('#price_converter_source_selector_' + loop).val();
+
+        if (!url) {
+            alert('Please enter a source URL for this variation.');
+            return;
+        }
+
+        var $btn = $(this);
+        var $spinner = $btn.siblings('.spinner');
+
+        $btn.prop('disabled', true);
+        $spinner.show();
+
+        $.ajax({
+            url: priceConverterAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'price_converter_fetch_price',
+                nonce: priceConverterAjax.nonce,
+                url: url,
+                selector: selector
+            },
+            success: function (response) {
+                if (response.success) {
+                    var fetched = response.data.price;
+                    $('#price_converter_base_price_' + loop).val(fetched).trigger('change');
+
+                    // Update the converted price display
+                    updateVariationIrt(loop);
+                } else {
+                    alert(response.data || 'Error fetching price');
+                }
+            },
+            error: function () {
+                alert('Error occurred while fetching price');
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+                $spinner.hide();
+            }
+        });
+    });
+
+    // Update variation IRT price when base price or currency changes
+    $(document).on('input change', '[id^="price_converter_base_price_"], [id^="price_converter_base_currency_"], [id^="price_converter_interest_mode_"], [id^="price_converter_interest_value_"]', function () {
+        var id = $(this).attr('id');
+        var loop = id.match(/\d+$/)[0];
+        updateVariationIrt(loop);
+    });
+
+    // Function to update variation IRT price
+    function updateVariationIrt(loop) {
+        var amount = parseFloat($('#price_converter_base_price_' + loop).val() || '0');
+        var currency = $('#price_converter_base_currency_' + loop).val() || 'USD';
+        var interestMode = $('#price_converter_interest_mode_' + loop).val() || 'inherit';
+        var interestValue = parseFloat($('#price_converter_interest_value_' + loop).val() || '0');
+
+        if (amount > 0) {
+            $.ajax({
+                url: priceConverterAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'price_converter_convert_price',
+                    nonce: priceConverterAjax.nonce,
+                    price: amount,
+                    currency: currency,
+                    interest_mode: interestMode,
+                    interest_value: interestValue
+                },
+                success: function (response) {
+                    if (response.success) {
+                        var val = response.data.converted_price;
+                        $('#pc_converted_irt_' + loop).val(val.toLocaleString());
+                    }
+                }
+            });
+        } else {
+            $('#pc_converted_irt_' + loop).val('');
+        }
+    }
 });
