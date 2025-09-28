@@ -175,6 +175,13 @@ For technical support or feature requests, please refer to the main plugin docum
 
 ## Changelog
 
+### **v2.2.0**
+- ✅ Added support for WooCommerce variable products — you can now set base prices and currencies for each variation, and the plugin will automatically calculate converted prices per variation.
+- ✅ Implemented hierarchical price parameter inheritance — variations can inherit interest mode and value from the parent product when not explicitly set.
+- ✅ Enhanced variation edit UI — added a live price preview field that updates in real-time using AJAX whenever relevant inputs (base price, currency, interest settings) change.
+- ✅ Fixed variable product price range display issues by integrating with woocommerce_get_variation_prices_hash.
+- ✅ Standardized translation file structure, added missing .mo files, and enabled proper Loco Translate syncing.
+
 ### Version 2.1.0
 - Added per-product interest rate settings
 - Added variation-specific price converter settings
