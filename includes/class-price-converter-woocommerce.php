@@ -41,16 +41,29 @@ class Price_Converter_WooCommerce
             return;
         }
 
-        // Frontend price overrides - with safety checks to prevent infinite loops
+        // Frontend price overrides - with safety checks to prevent infinite loops - simple products
         add_filter('woocommerce_product_get_price', array($this, 'filter_product_price_safe'), 999, 2);
         add_filter('woocommerce_product_get_regular_price', array($this, 'filter_product_price_safe'), 999, 2);
         add_filter('woocommerce_product_get_sale_price', array($this, 'filter_product_price_safe'), 999, 2);
+
+        // Frontend price overrides - with safety checks to prevent infinite loops - variable products: product variations
         add_filter('woocommerce_product_variation_get_price', array($this, 'filter_product_price_safe'), 999, 2);
         add_filter('woocommerce_product_variation_get_regular_price', array($this, 'filter_product_price_safe'), 999, 2);
         add_filter('woocommerce_product_variation_get_sale_price', array($this, 'filter_product_price_safe'), 999, 2);
+
+        // Frontend price overrides - with safety checks to prevent infinite loops - variable products
+        add_filter('woocommerce_variation_prices_price', array($this, 'filter_variation_prices_safe'), 999, 3);
+        add_filter('woocommerce_variation_prices_regular_price', array($this, 'filter_variation_prices_safe'), 999, 3);
+        add_filter('woocommerce_variation_prices_sale_price', array($this, 'filter_variation_prices_safe'), 999, 3);
+
         add_filter('woocommerce_get_price_html', array($this, 'filter_price_html_safe'), 999, 2);
 
         add_filter('woocommerce_get_variation_prices_hash', array($this, 'filter_variation_prices_hash'), 999, 3);
+    }
+
+    public function filter_variation_prices_safe($price, $variation, $product) {
+        wc_delete_product_transients($variation->get_id());
+        return $this->filter_product_price_safe($price, $variation);
     }
 
     /**
@@ -305,6 +318,10 @@ class Price_Converter_WooCommerce
 
             $base_price = get_post_meta($product_id, '_price_converter_base_price', true);
             $base_currency = get_post_meta($product_id, '_price_converter_base_currency', true);
+            $interest_mode = get_post_meta($product_id, '_price_converter_interest_mode', true);
+            $interest_value = get_post_meta($product_id, '_price_converter_interest_value', true);
+            $settings_interest_mode = isset($settings['interest_mode']) ? $settings['interest_mode'] : 'none';
+            $settings_interest_value = isset($settings['interest_value']) ? $settings['interest_value'] : 0.0;
 
             if ($base_price === '' || $base_price === null) {
                 $legacy_usd = get_post_meta($product_id, '_price_converter_usd_price', true);
@@ -317,8 +334,27 @@ class Price_Converter_WooCommerce
             if ($base_price === '' || $base_price === null) {
                 $parent_id = method_exists($product, 'get_parent_id') ? $product->get_parent_id() : 0;
                 if ($parent_id) {
-                    $base_price = get_post_meta($parent_id, '_price_converter_base_price', true);
-                    $base_currency = get_post_meta($parent_id, '_price_converter_base_currency', true);
+                    /*$base_price = get_post_meta($parent_id, '_price_converter_base_price', true);
+                    $base_currency = get_post_meta($parent_id, '_price_converter_base_currency', true);*/
+
+                    $default_currency = get_post_meta($parent_id, '_default_price_converter_base_currency', true);
+                    $default_interest_mode = get_post_meta($parent_id, '_default_price_converter_interest_mode', true);
+                    $default_interest_value = get_post_meta($parent_id, '_default_price_converter_interest_value', true);
+
+                    if ($interest_mode === '') {
+                        if ($default_interest_mode === 'inherit' || $default_interest_mode === '') {
+                            $interest_mode = $settings_interest_mode;
+                            $interest_value = $settings_interest_value;
+                        } else {
+                            $interest_mode = $default_interest_mode;
+                            $interest_value = $default_interest_value;
+                        }
+                    }
+
+                    if (empty($base_currency)) {
+                        $base_currency = $default_currency ? $default_currency : 'USD';
+                    }
+
                     if ($base_price === '' || $base_price === null) {
                         $legacy_usd = get_post_meta($parent_id, '_price_converter_usd_price', true);
                         if ($legacy_usd !== '' && $legacy_usd !== null) {
@@ -338,11 +374,7 @@ class Price_Converter_WooCommerce
                         $store_currency = get_option('woocommerce_currency', 'USD');
                         $rate = $this->get_currency_rate_irt($store_currency);
                         if ($rate > 0) {
-                            // Get product-specific interest settings for fallback
-                            $product_interest_mode = get_post_meta($product_id, '_price_converter_interest_mode', true);
-                            $product_interest_value = get_post_meta($product_id, '_price_converter_interest_value', true);
-
-                            $converted = round($this->apply_interest($amount * $rate, $product_interest_mode, $product_interest_value), 0);
+                            $converted = round($this->apply_interest($amount * $rate, $interest_mode, $interest_value), 0);
                             return (string) $converted;
                         }
                     }
@@ -358,12 +390,8 @@ class Price_Converter_WooCommerce
                 try {
                     $rate = $this->get_currency_rate_irt($currency);
                     if ($rate > 0) {
-                        // Get product-specific interest settings
-                        $product_interest_mode = get_post_meta($product_id, '_price_converter_interest_mode', true);
-                        $product_interest_value = get_post_meta($product_id, '_price_converter_interest_value', true);
-
                         // Apply interest based on product settings
-                        $converted = round($this->apply_interest($amount * $rate, $product_interest_mode, $product_interest_value), 0);
+                        $converted = round($this->apply_interest($amount * $rate, $interest_mode, $interest_value), 0);
                         return (string) $converted;
                     }
                 } catch (Exception $e) {
@@ -398,7 +426,12 @@ class Price_Converter_WooCommerce
         }
         $parent_currency = get_post_meta($product->get_id(), '_price_converter_base_currency', true);
         $hash['pc_parent_currency'] = (string) ($parent_currency ?: get_option('woocommerce_currency', 'USD'));
-        $hash['pc_parent_amount'] = (string) get_post_meta($product->get_id(), '_price_converter_base_price', true);
+        $base_price_meta = get_post_meta($product->get_id(), '_price_converter_base_price', true);
+        if (is_array($base_price_meta)) {
+            $hash['pc_parent_amount'] = md5(json_encode($base_price_meta));
+        } else {
+            $hash['pc_parent_amount'] = (string) $base_price_meta;
+        }
         $hash['pc_store_currency'] = (string) get_option('woocommerce_currency', 'USD');
         $settings = get_option('price_converter_settings', array());
         $hash['pc_usd_rate_fallback'] = (string) (isset($settings['exchange_rate']) ? $settings['exchange_rate'] : '');
@@ -928,24 +961,36 @@ class Price_Converter_WooCommerce
     }
 
     public function add_variation_pricing_fields($loop, $variation_data, $variation) {
+        // Get variations prices
         $base_price = get_post_meta($variation->ID, '_price_converter_base_price', true);
         $base_currency = get_post_meta($variation->ID, '_price_converter_base_currency', true);
         $interest_mode = get_post_meta($variation->ID, '_price_converter_interest_mode', true);
         $interest_value = get_post_meta($variation->ID, '_price_converter_interest_value', true);
 
+        // Get paerent prices as default settings
         $parent_id = wp_get_post_parent_id($variation->ID);
         $default_currency = get_post_meta($parent_id, '_default_price_converter_base_currency', true);
         $default_interest_mode = get_post_meta($parent_id, '_default_price_converter_interest_mode', true);
         $default_interest_value = get_post_meta($parent_id, '_default_price_converter_interest_value', true);
 
+        // Get default settings
+        $settings = get_option('price_converter_settings', array());
+        $settings_interest_mode = isset($settings['interest_mode']) ? $settings['interest_mode'] : 'none';
+        $settings_interest_value = isset($settings['interest_value']) ? $settings['interest_value'] : 0.0;
+
+        // Determine effective interest settings
+        if ($interest_mode === '') {
+            if ($default_interest_mode === 'inherit' || $default_interest_mode === '') {
+                $interest_mode = $settings_interest_mode;
+                $interest_value = $settings_interest_value;
+            } else {
+                $interest_mode = $default_interest_mode;
+                $interest_value = $default_interest_value;
+            }
+        }
+
         if (empty($base_currency)) {
             $base_currency = $default_currency ? $default_currency : 'USD';
-        }
-        if (empty($interest_mode)) {
-            $interest_mode = $default_interest_mode ? $default_interest_mode : 'none';
-        }
-        if ($interest_value === '' || $interest_value === null) {
-            $interest_value = $default_interest_value ? $default_interest_value : 0;
         }
 
         echo '<div class="variation-price-converter">';
