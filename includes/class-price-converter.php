@@ -335,7 +335,7 @@ class Price_Converter
             }
 
             // If product-specific settings are provided, use them
-            if ($product_id && $interest_mode !== null && $interest_value !== null) {
+            if ($interest_mode !== null && $interest_value !== null) {
                 $mode = $interest_mode;
                 $value = floatval($interest_value);
             } else {
@@ -465,6 +465,23 @@ class Price_Converter
         // Handle custom interest settings if provided
         $interest_mode = isset($_POST['interest_mode']) ? sanitize_text_field($_POST['interest_mode']) : null;
         $interest_value = isset($_POST['interest_value']) ? floatval($_POST['interest_value']) : null;
+        $product_id      = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+
+        if ($interest_mode === 'inherit' && $product_id) {
+            $product = wc_get_product( $product_id );
+
+            if ( $product->is_type('variable') ) {
+                $parent_interest_mode = get_post_meta($product_id, '_default_price_converter_interest_mode', true);
+                $parent_interest_value = get_post_meta($product_id, '_default_price_converter_interest_value', true);
+
+                if (!empty($parent_interest_mode)) {
+                    $interest_mode = $parent_interest_mode;
+                }
+                if (!empty($parent_interest_value)) {
+                    $interest_value = floatval($parent_interest_value);
+                }
+            }
+        }
 
         if ($interest_mode && $interest_value !== null) {
             // Use custom interest settings
@@ -477,7 +494,8 @@ class Price_Converter
         wp_send_json_success(array(
             'original_price' => $price,
             'converted_price' => $converted_price,
-            'currency' => 'IRT'
+            'currency' => 'IRT',
+            'test_data' => [$interest_mode, $interest_value]
         ));
     }
 

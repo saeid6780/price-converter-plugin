@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/emjayi/price-converter-plugin
  * Description: A WordPress plugin that converts prices from various sources (like PlayStation website) to Iranian Toman and integrates with WooCommerce.
  * Version: 2.1.0
- * Author: Emjay Sepahi
+ * Author: Emjay Sepahi, Saeid6780
  * License: GPL v2 or later
  * Text Domain: price-converter-plugin
  * Domain Path: /languages

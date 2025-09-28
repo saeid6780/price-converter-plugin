@@ -179,15 +179,21 @@ jQuery(document).ready(function ($) {
     $(document).on('input change', '[id^="price_converter_base_price_"], [id^="price_converter_base_currency_"], [id^="price_converter_interest_mode_"], [id^="price_converter_interest_value_"]', function () {
         var id = $(this).attr('id');
         var loop = id.match(/\d+$/)[0];
-        updateVariationIrt(loop);
+        var sectionParent= $(this).parents('.price-converter-section-variations');
+        var parentId = $(sectionParent).find('.price-converter-result').attr('data-parent-id');
+        updateVariationIrt(loop, parentId);
     });
 
     // Function to update variation IRT price
-    function updateVariationIrt(loop) {
+    function updateVariationIrt(loop, productId) {
+
+        if (typeof productId === 'undefined')
+            alert('Product ID Error!');
+
         var amount = parseFloat($('#price_converter_base_price_' + loop).val() || '0');
-        var currency = $('#price_converter_base_currency_' + loop).val() || 'USD';
-        var interestMode = $('#price_converter_interest_mode_' + loop).val() || 'inherit';
-        var interestValue = parseFloat($('#price_converter_interest_value_' + loop).val() || '0');
+        var currency                 = $('#price_converter_base_currency_' + loop).val() || 'USD';
+        var interestMode             = $('#price_converter_interest_mode_' + loop).val() || 'inherit';
+        var interestValue    = parseFloat($('#price_converter_interest_value_' + loop).val() || '0');
 
         if (amount > 0) {
             $.ajax({
@@ -199,7 +205,8 @@ jQuery(document).ready(function ($) {
                     price: amount,
                     currency: currency,
                     interest_mode: interestMode,
-                    interest_value: interestValue
+                    interest_value: interestValue,
+                    product_id: productId
                 },
                 success: function (response) {
                     if (response.success) {

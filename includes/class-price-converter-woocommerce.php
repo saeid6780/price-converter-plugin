@@ -341,14 +341,15 @@ class Price_Converter_WooCommerce
                     $default_interest_mode = get_post_meta($parent_id, '_default_price_converter_interest_mode', true);
                     $default_interest_value = get_post_meta($parent_id, '_default_price_converter_interest_value', true);
 
-                    if ($interest_mode === '') {
-                        if ($default_interest_mode === 'inherit' || $default_interest_mode === '') {
+                    if ( empty( $interest_mode ) || $interest_mode === 'inherit' ){
+                        if ($default_interest_mode === 'inherit' || $default_interest_mode === '')
                             $interest_mode = $settings_interest_mode;
-                            $interest_value = $settings_interest_value;
-                        } else {
+                        else
                             $interest_mode = $default_interest_mode;
-                            $interest_value = $default_interest_value;
-                        }
+                    }
+
+                    if ( empty( $interest_value ) ){
+                        $interest_value = empty( $default_interest_value ) ? $settings_interest_value : $default_interest_value;
                     }
 
                     if (empty($base_currency)) {
@@ -637,154 +638,6 @@ class Price_Converter_WooCommerce
 
         echo '</div>';
 
-        // Add CSS for better styling
-        echo '<style>
-        .price-converter-section {
-            background: #f9f9f9;
-            border: 1px solid #e1e1e1;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .price-converter-title {
-            margin: 0 0 15px 0;
-            color: #23282d;
-            font-size: 16px;
-            font-weight: 600;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-        
-        .price-converter-title .dashicons {
-            color: #667eea;
-            margin-right: 8px;
-        }
-        
-        .price-converter-description {
-            color: #666;
-            margin-bottom: 20px;
-            font-style: italic;
-        }
-        
-        .price-converter-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .price-converter-field {
-            min-width: 0;
-        }
-        
-        .price-converter-input {
-            width: 100% !important;
-            padding: 8px 12px !important;
-            border: 2px solid #e1e1e1 !important;
-            border-radius: 6px !important;
-            font-size: 14px !important;
-            transition: border-color 0.3s ease !important;
-        }
-        
-        .price-converter-input:focus {
-            border-color: #667eea !important;
-            outline: none !important;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
-        }
-        
-        .price-converter-select {
-            width: 100% !important;
-            padding: 8px 12px !important;
-            border: 2px solid #e1e1e1 !important;
-            border-radius: 6px !important;
-            font-size: 14px !important;
-            background: white !important;
-        }
-        
-        .price-converter-select:focus {
-            border-color: #667eea !important;
-            outline: none !important;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
-        }
-        
-        .price-converter-actions-section {
-            background: #f0f8ff;
-            border: 1px solid #b3d9ff;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        
-        .price-converter-btn {
-            padding: 10px 15px !important;
-            height: auto !important;
-            font-size: 14px !important;
-            background: #667eea !important;
-            border-color: #667eea !important;
-            color: white !important;
-        }
-        
-        .price-converter-btn:hover {
-            background: #5a6fd8 !important;
-            border-color: #5a6fd8 !important;
-        }
-        
-        .price-converter-btn .dashicons {
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        
-        .price-converter-help-text {
-            display: block;
-            margin-top: 8px;
-            color: #666;
-            font-size: 13px;
-            font-style: italic;
-        }
-        
-        .price-converter-result {
-            background: #e8f5e8;
-            border: 1px solid #c3e6c3;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        
-        .price-converter-result-input {
-            background: white !important;
-            border: 2px solid #28a745 !important;
-            color: #155724 !important;
-            font-weight: 600 !important;
-            text-align: center !important;
-        }
-        
-        .price-converter-debug {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 20px 0;
-            border-left: 4px solid #0073aa;
-        }
-        
-        .price-converter-debug-content {
-            background: white;
-            padding: 15px;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            font-size: 11px;
-            margin: 10px 0 0 0;
-            overflow-x: auto;
-        }
-        
-        @media (max-width: 768px) {
-            .price-converter-row {
-                grid-template-columns: 1fr;
-            }
-        }
-        </style>';
-
         ?>
         <script type="text/javascript">
             jQuery(function ($) {
@@ -875,7 +728,7 @@ class Price_Converter_WooCommerce
     public function add_default_price_settings_tab( $tabs )
     {
         $tabs['default_price_settings'] = array(
-            'label'    => __('Default Price Settings', 'price-converter-plugin'),
+            'label'    => __('Price Converter Settings', 'price-converter-plugin'),
             'target'   => 'default_price_settings_data',
             'class'    => array('show_if_variable'),
             'priority' => 20,
@@ -899,8 +752,9 @@ class Price_Converter_WooCommerce
                 <?php
                 // Base Currency
                 woocommerce_wp_select(array(
-                    'id' => '_default_price_converter_base_currency',
-                    'label' => __('Default Base Currency', 'price-converter-plugin'),
+                    'id'     => '_default_price_converter_base_currency',
+                    'label'  => __('Default Base Currency', 'price-converter-plugin'),
+                    'value'  => $default_currency ? $default_currency : 'USD',
                     'options' => array(
                         'USD' => 'USD',
                         'EUR' => 'EUR',
@@ -912,19 +766,19 @@ class Price_Converter_WooCommerce
                         'IRR' => 'IRR',
                         'IRT' => 'IRT',
                     ),
-                    'value' => $default_currency ? $default_currency : 'USD',
                 ));
 
                 // Interest Mode
                 woocommerce_wp_select(array(
-                    'id' => '_default_price_converter_interest_mode',
-                    'label' => __('Default Interest Mode', 'price-converter-plugin'),
-                    'options' => array(
-                        'none' => __('No Interest', 'price-converter-plugin'),
-                        'percent' => __('Percentage (%)', 'price-converter-plugin'),
-                        'fixed' => __('Fixed Amount', 'price-converter-plugin'),
+                    'id'         => '_default_price_converter_interest_mode',
+                    'label'      => __('Default Interest Mode', 'price-converter-plugin'),
+                    'value'      => $default_interest_mode ? $default_interest_mode : 'none',
+                    'options'    => array(
+                        'inherit'    => __('Use Default', 'price-converter-plugin'),
+                        'none'       => __('No Interest', 'price-converter-plugin'),
+                        'percent'    => __('Percentage (%)', 'price-converter-plugin'),
+                        'fixed'      => __('Fixed Amount', 'price-converter-plugin'),
                     ),
-                    'value' => $default_interest_mode ? $default_interest_mode : 'none',
                 ));
 
                 // Interest Value
@@ -979,38 +833,49 @@ class Price_Converter_WooCommerce
         $settings_interest_value = isset($settings['interest_value']) ? $settings['interest_value'] : 0.0;
 
         // Determine effective interest settings
-        if ($interest_mode === '') {
-            if ($default_interest_mode === 'inherit' || $default_interest_mode === '') {
+        if ( empty( $interest_mode ) || $interest_mode === 'inherit' ){
+            if ($default_interest_mode === 'inherit' || $default_interest_mode === '')
                 $interest_mode = $settings_interest_mode;
-                $interest_value = $settings_interest_value;
-            } else {
+            else
                 $interest_mode = $default_interest_mode;
-                $interest_value = $default_interest_value;
-            }
+        }
+
+        if ( empty( $interest_value ) ){
+            $interest_value = empty( $default_interest_value ) ? $settings_interest_value : $default_interest_value;
         }
 
         if (empty($base_currency)) {
             $base_currency = $default_currency ? $default_currency : 'USD';
         }
 
-        echo '<div class="variation-price-converter">';
-        echo '<h4>' . __('Price Converter (Variation)', 'price-converter-plugin') . '</h4>';
+        echo '<div class="options_group price-converter-section price-converter-section-variations">';
+        echo '<h4 class="price-converter-title"><span class="dashicons dashicons-money-alt"></span> ' . __('Price Converter Settings', 'price-converter-plugin') . '</h4>';
 
+        echo '<div class="price-converter-row">';
+        echo '<div class="price-converter-field">';
         // Base Price
         woocommerce_wp_text_input(array(
-            'id' => "price_converter_base_price_{$loop}",
-            'name' => "price_converter_base_price[{$variation->ID}]",
-            'label' => __('Base Price', 'price-converter-plugin'),
-            'type' => 'number',
-            'custom_attributes' => array('step' => '0.01', 'min' => '0'),
-            'value' => $base_price,
+            'id'                 => "price_converter_base_price_{$loop}",
+            'name'               => "price_converter_base_price[{$variation->ID}]",
+            'class'              => 'price-converter-input',
+            'wrapper_class'      => 'price_converter_base_price_field',
+            'desc_tip'           => true,
+            'description'        => __('Set the variable base price in the selected currency. It will be converted to Toman (IRT) for display.', 'price-converter-plugin'),
+            'label'              => __('Base Price', 'price-converter-plugin'),
+            'type'               => 'number',
+            'custom_attributes'  => array('step' => '0.01', 'min' => '0'),
+            'value'              => $base_price,
         ));
+        echo '</div>';
 
+        echo '<div class="price-converter-field">';
         // Base Currency
         woocommerce_wp_select(array(
-            'id' => "price_converter_base_currency_{$loop}",
-            'name' => "price_converter_base_currency[{$variation->ID}]",
-            'label' => __('Base Currency', 'price-converter-plugin'),
+            'id'             => "price_converter_base_currency_{$loop}",
+            'name'           => "price_converter_base_currency[{$variation->ID}]",
+            'class'          => 'price-converter-select',
+            'wrapper_class'  => 'price-converter-select-field',
+            'label'          => __('Base Currency', 'price-converter-plugin'),
             'options' => array(
                 'USD' => 'USD',
                 'EUR' => 'EUR',
@@ -1024,30 +889,76 @@ class Price_Converter_WooCommerce
             ),
             'value' => $base_currency,
         ));
+        echo '</div>';
+        echo '</div>';
 
+        echo '<div class="price-converter-row">';
+        echo '<div class="price-converter-field">';
         // Interest Mode
         woocommerce_wp_select(array(
-            'id' => "price_converter_interest_mode_{$loop}",
-            'name' => "price_converter_interest_mode[{$variation->ID}]",
-            'label' => __('Interest Mode', 'price-converter-plugin'),
-            'options' => array(
-                'inherit' => __('Use Default', 'price-converter-plugin'),
-                'none' => __('No Interest', 'price-converter-plugin'),
-                'percent' => __('Percentage (%)', 'price-converter-plugin'),
-                'fixed' => __('Fixed Amount', 'price-converter-plugin'),
+            'id'             => "price_converter_interest_mode_{$loop}",
+            'name'           => "price_converter_interest_mode[{$variation->ID}]",
+            'class'          => 'price-converter-select',
+            'wrapper_class'  => 'price-converter-select-field',
+            'label'          => __('Interest Mode', 'price-converter-plugin'),
+            'value'          => $interest_mode,
+            'options'        => array(
+                'inherit'    => __('Use Default', 'price-converter-plugin'),
+                'none'       => __('No Interest', 'price-converter-plugin'),
+                'percent'    => __('Percentage (%)', 'price-converter-plugin'),
+                'fixed'      => __('Fixed Amount', 'price-converter-plugin'),
             ),
-            'value' => $interest_mode,
         ));
+        echo '</div>';
 
+        echo '<div class="price-converter-field">';
         // Interest Value
         woocommerce_wp_text_input(array(
-            'id' => "price_converter_interest_value_{$loop}",
-            'name' => "price_converter_interest_value[{$variation->ID}]",
-            'label' => __('Interest Value', 'price-converter-plugin'),
-            'type' => 'number',
-            'custom_attributes' => array('step' => '0.01', 'min' => '0'),
-            'value' => $interest_value,
+            'id'                 => "price_converter_interest_value_{$loop}",
+            'name'               => "price_converter_interest_value[{$variation->ID}]",
+            'class'              => 'price-converter-input',
+            'wrapper_class'      => 'price-converter-select-field',
+            'desc_tip'           => true,
+            'description'        => __('Set the interest value for this variable. Leave empty to use default settings.', 'price-converter-plugin'),
+            'label'              => __('Interest Value', 'price-converter-plugin'),
+            'type'               => 'number',
+            'custom_attributes'  => array('step' => '0.01', 'min' => '0'),
+            'value'              => $interest_value,
         ));
+        echo '</div>';
+        echo '</div>';
+
+        // Converted Price Display
+        $amount = $base_price !== '' ? floatval($base_price) : 0;
+        $rate = $this->get_currency_rate_irt($base_currency);
+        $irt = $amount ? round($this->apply_interest($amount * $rate, $interest_mode, $interest_value), 0) : '';
+
+        echo '<div class="price-converter-result" data-parent-id="' . esc_attr( $parent_id ) . '">';
+        echo '<p class="form-field">';
+        echo '<label>' . esc_html__('Converted Price (IRT)', 'price-converter-plugin') . '</label>';
+        echo '<input type="text" id="pc_converted_irt_' . $loop . '" readonly value="' . esc_attr($irt ? number_format($irt, 0, '.', ',') : '') . '" class="price-converter-result-input" />';
+        echo '<span class="description">' . esc_html__('This shows the converted price in Iranian Toman (IRT). The conversion uses the current exchange rate for the selected currency and product-specific interest settings.', 'price-converter-plugin') . '</span>';
+        echo '</p>';
+        echo '</div>';
+
+        // Add debug information for developers
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            $debug_info = array(
+                'base_price' => $base_price,
+                'base_currency' => $base_currency,
+                'exchange_rate' => $rate,
+                'converted_before_interest' => $amount * $rate,
+                'interest_mode' => $interest_mode,
+                'interest_value' => $interest_value,
+                'final_converted' => $irt
+            );
+            echo '<div class="price-converter-debug">';
+            echo '<p class="form-field">';
+            echo '<label><strong>Debug Info (WP_DEBUG enabled):</strong></label>';
+            echo '<pre class="price-converter-debug-content">' . esc_html(json_encode($debug_info, JSON_PRETTY_PRINT)) . '</pre>';
+            echo '</p>';
+            echo '</div>';
+        }
 
         echo '</div>';
     }
