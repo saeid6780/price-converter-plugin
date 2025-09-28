@@ -1,0 +1,651 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Price Converter Plugin\n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: 2025-09-28 18:50+0000\n"
+"Last-Translator: Emjay Sepahi <emjay@emjaysepahi.com>\n"
+"Language-Team: فارسی\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Loco https://localise.biz/"
+
+#: includes/class-price-converter-admin.php:830
+#: includes/class-price-converter-admin.php:851
+msgid "1 Hour"
+msgstr "1 ساعت"
+
+#: includes/class-price-converter-admin.php:834
+#: includes/class-price-converter-admin.php:855
+msgid "12 Hours"
+msgstr "12 ساعت"
+
+#: includes/class-price-converter-admin.php:831
+#: includes/class-price-converter-admin.php:852
+msgid "2 Hours"
+msgstr "2 ساعت"
+
+#: includes/class-price-converter-admin.php:828
+#: includes/class-price-converter-admin.php:850
+msgid "30 Minutes"
+msgstr "30 دقیقه"
+
+#: includes/class-price-converter-admin.php:832
+#: includes/class-price-converter-admin.php:853
+msgid "4 Hours"
+msgstr "4 ساعت"
+
+#: includes/class-price-converter-admin.php:833
+#: includes/class-price-converter-admin.php:854
+msgid "6 Hours"
+msgstr "6 ساعت"
+
+#. Description of the plugin
+msgid ""
+"A WordPress plugin that converts prices from various sources (like "
+"PlayStation website) to Iranian Toman and integrates with WooCommerce."
+msgstr ""
+"یک پلاگین وردپرسی برای تبدیل قیمت ها از منابع مختلف (مثل سایت پلی استیشن) به "
+"تومان ایران و یکپارچه سازی با ووکامرس"
+
+#: includes/class-price-converter-woocommerce.php:553
+#: includes/class-price-converter-woocommerce.php:1140
+msgid "Actions"
+msgstr "اقدام ها"
+
+#: includes/class-price-converter-admin.php:229
+msgid "Active"
+msgstr "فعال"
+
+#: includes/class-price-converter-admin.php:593
+msgid ""
+"Add custom currencies with their exchange rates to IRT. Format: "
+"{\"CURRENCY_CODE\": EXCHANGE_RATE}. Example: {\"BTC\": 1500000000} means 1 "
+"BTC = 1,500,000,000 IRT."
+msgstr ""
+"ارزهای سفارشی را با نرخ‌های ارز آنها به تومان اضافه کنید. فرمت: {\"کد_ارز\": "
+"نرخ_ارز}. مثال: {\"BTC\": 1500000000} به معنای 1 BTC = 1,500,000,000 تومان "
+"است."
+
+#: includes/class-price-converter-admin.php:291
+msgid "All rights reserved"
+msgstr "تمامی حقوق محفوظ است"
+
+#: includes/class-price-converter-admin.php:216
+msgid "API Connection:"
+msgstr "اتصال API:"
+
+#: includes/class-price-converter-admin.php:101
+msgid "API Key"
+msgstr "کلید API"
+
+#: includes/class-price-converter-woocommerce.php:483
+#: includes/class-price-converter-woocommerce.php:1057
+msgid "Australian Dollar (AUD)"
+msgstr "دلار استرالیا (AUD)"
+
+#: includes/class-price-converter-woocommerce.php:511
+#: includes/class-price-converter-woocommerce.php:878
+#: includes/class-price-converter-woocommerce.php:1050
+msgid "Base Currency"
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:467
+#: includes/class-price-converter-woocommerce.php:864
+#: includes/class-price-converter-woocommerce.php:1042
+msgid "Base Price"
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:481
+#: includes/class-price-converter-woocommerce.php:1055
+msgid "British Pound (GBP)"
+msgstr "پوند انگلیس"
+
+#: includes/class-price-converter-woocommerce.php:482
+#: includes/class-price-converter-woocommerce.php:1056
+msgid "Canadian Dollar (CAD)"
+msgstr "دلار کانادا (CAD)"
+
+#: includes/class-price-converter-woocommerce.php:486
+#: includes/class-price-converter-woocommerce.php:1060
+msgid "Chinese Yuan (CNY)"
+msgstr "یوآن چین"
+
+#: includes/class-price-converter-woocommerce.php:558
+#: includes/class-price-converter-woocommerce.php:1145
+msgid "Click to automatically fetch the price from the source URL."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:460
+msgid ""
+"Configure how this product's price should be converted to Iranian Toman (IRT)"
+"."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:518
+msgid "Configure non-USD rates in plugin settings, or set API key."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:521
+msgid "Configure the price converter settings below."
+msgstr "تنظیمات تبدیل قیمت را در زیر پیکربندی کنید."
+
+#: includes/class-price-converter-admin.php:222
+msgid "Configured"
+msgstr "پیکره بندی شد"
+
+#: includes/class-price-converter-admin.php:217
+msgid "Connected"
+msgstr "متصل"
+
+#: includes/class-price-converter-admin.php:277
+msgid "Convert to IRT"
+msgstr "تبدیل به تومان"
+
+#: includes/class-price-converter-woocommerce.php:613
+#: includes/class-price-converter-woocommerce.php:938
+#: includes/class-price-converter-woocommerce.php:1156
+msgid "Converted Price (IRT)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:139
+msgid "Converting price..."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:542
+msgid ""
+"CSS selector (e.g., .price, #price) or data-qa attribute (e.g., data-"
+"qa=\"price\", data-qa=\"amount\")."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:1106
+msgid "CSS Selector (optional)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:261
+msgid "CSS Selector or data-qa (Optional)"
+msgstr "انتخابگر CSS یا data-qa (اختیاری)"
+
+#: includes/class-price-converter-woocommerce.php:540
+msgid "CSS Selector or data-qa (optional)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:265
+msgid "CSS selector or data-qa attribute for price extraction"
+msgstr "انتخابگر CSS یا ویژگی data-qa برای استخراج قیمت"
+
+#: includes/class-price-converter-woocommerce.php:1108
+msgid "CSS selector or data-qa attribute for price extraction."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:563
+msgid "Current Custom Currencies"
+msgstr "ارزهای سفارشی فعلی"
+
+#: includes/class-price-converter-woocommerce.php:501
+#: includes/class-price-converter-woocommerce.php:1074
+#, php-format
+msgid "Custom %s (%s)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:70
+msgid "Custom Currencies"
+msgstr "ارزهای سفارشی"
+
+#: includes/class-price-converter-admin.php:883
+msgid "Custom currencies must be valid JSON format."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:221
+msgid "Custom Currencies:"
+msgstr "ارزهای سفارشی:"
+
+#: includes/class-price-converter-admin.php:62
+msgid "Custom Currency Rates (JSON)"
+msgstr "نرخ‌های ارز سفارشی (JSON)"
+
+#: includes/class-price-converter-admin.php:836
+#: includes/class-price-converter-admin.php:856
+msgid "Daily"
+msgstr "روزانه"
+
+#: includes/class-price-converter-woocommerce.php:756
+msgid "Default Base Currency"
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:774
+msgid "Default Interest Mode"
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:787
+msgid "Default Interest Value"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:109
+msgid "Default Item (USD source)"
+msgstr "آیتم پیش‌فرض (منبع دلار)"
+
+#: includes/class-price-converter-woocommerce.php:750
+msgid "Default Price Converter Settings for Variations"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:229
+#: includes/class-price-converter-admin.php:950
+msgid "Disabled"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:198
+msgid "Documentation"
+msgstr "مستندات"
+
+#. Author of the plugin
+msgid "Emjay Sepahi, Saeid6780"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:953
+msgid "Enable or disable fallback mode for price conversion."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:948
+msgid "Enabled"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:255
+msgid "Enter a URL to test price fetching"
+msgstr "URL را برای تست دریافت قیمت وارد کنید"
+
+#: includes/class-price-converter-admin.php:937
+msgid "Enter the default item for USD source (e.g., \"usd\")."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:926
+msgid "Enter your Navasan API key for real-time exchange rates."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:140
+msgid "Error occurred"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:576
+msgid "Error Reading Custom Currencies"
+msgstr "خطا در خواندن ارزهای سفارشی"
+
+#: includes/class-price-converter-woocommerce.php:480
+#: includes/class-price-converter-woocommerce.php:1054
+msgid "Euro (EUR)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:46
+msgid "Exchange Rate (USD to IRT)"
+msgstr "نرخ ارز (دلار به تومان)"
+
+#: includes/class-price-converter-admin.php:117
+msgid "Fallback Mode"
+msgstr "حالت پشتیبان"
+
+#: includes/class-price-converter-admin.php:536
+msgid "Fallback USD→IRT when API/rates are unavailable."
+msgstr "نرخ ارز پیش‌فرض دلار به تومان زمانی که API/نرخ‌ها در دسترس نیست."
+
+#: includes/class-price-converter-woocommerce.php:555
+#: includes/class-price-converter-woocommerce.php:1142
+msgid "Fetch Price"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:138
+msgid "Fetching price..."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:586
+#: includes/class-price-converter-woocommerce.php:780
+#: includes/class-price-converter-woocommerce.php:909
+#: includes/class-price-converter-woocommerce.php:1122
+msgid "Fixed Amount"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:802
+msgid "Fixed Amount (IRT)"
+msgstr "مبلغ ثابت (تومان)"
+
+#: includes/class-price-converter-admin.php:39
+msgid "General Settings"
+msgstr "تنظیمات عمومی"
+
+#: includes/class-price-converter-admin.php:191
+msgid "Help & Support"
+msgstr "راهنما و پشتیبانی"
+
+#: includes/class-price-converter-admin.php:592
+msgid "How to Use"
+msgstr "نحوه استفاده"
+
+#. URI of the plugin
+msgid "https://github.com/emjayi/price-converter-plugin"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:817
+msgid ""
+"If Percent mode: value is percentage. If Fixed mode: value is IRT amount."
+msgstr "اگر حالت درصد: مقدار درصد است. اگر حالت ثابت: مقدار مبلغ تومان است."
+
+#: includes/class-price-converter-admin.php:526
+msgid ""
+"If you provide a Navasan API Key, the plugin will fetch USD→IRR (and others) "
+"and convert to IRT by removing one zero."
+msgstr ""
+"اگر کلید API نوسان را ارائه دهید، پلاگین USD→IRR (و سایرین) را دریافت کرده و "
+"با حذف یک صفر به IRT تبدیل می‌کند."
+
+#: includes/class-price-converter-woocommerce.php:1119
+msgid "Inherit from Product"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:78
+#: includes/class-price-converter-woocommerce.php:903
+#: includes/class-price-converter-woocommerce.php:1117
+msgid "Interest Mode"
+msgstr "حالت بهره"
+
+#: includes/class-price-converter-woocommerce.php:581
+msgid "Interest Mode (Override Default)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:86
+#: includes/class-price-converter-woocommerce.php:923
+#: includes/class-price-converter-woocommerce.php:1130
+msgid "Interest Value"
+msgstr "مقدار بهره"
+
+#: includes/class-price-converter-woocommerce.php:595
+msgid "Interest Value (Override Default)"
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:489
+#: includes/class-price-converter-woocommerce.php:1063
+msgid "Iranian Rial (IRR)"
+msgstr "ریال ایران"
+
+#: price-converter-plugin.php:44
+msgid "Iranian Toman"
+msgstr "تومان ایران"
+
+#: includes/class-price-converter-woocommerce.php:490
+#: includes/class-price-converter-woocommerce.php:1064
+msgid "Iranian Toman (IRT)"
+msgstr "تومان ایران (IRT)"
+
+#: includes/class-price-converter-woocommerce.php:487
+#: includes/class-price-converter-woocommerce.php:1061
+msgid "Japanese Yen (JPY)"
+msgstr "ین ژاپن"
+
+#: includes/class-price-converter-admin.php:548
+msgid ""
+"JSON map of per-currency rates to IRT, used when API does not provide that "
+"currency."
+msgstr ""
+"نقشه JSON نرخ‌های ارز به تومان، زمانی استفاده می‌شود که API آن ارز را ارائه "
+"نمی‌دهد."
+
+#: includes/class-price-converter-admin.php:180
+msgid "Manage Products"
+msgstr "مدیریت محصولات"
+
+#: includes/class-price-converter-admin.php:839
+#: includes/class-price-converter-admin.php:858
+msgid "Monthly"
+msgstr "ماهانه"
+
+#: includes/class-price-converter-admin.php:94
+msgid "Navasan Web Service (optional)"
+msgstr "سرویس وب نوسان (اختیاری)"
+
+#: includes/class-price-converter-admin.php:193
+msgid "Need help? Check our documentation or contact support."
+msgstr ""
+"نیاز به کمک دارید؟ مستندات ما را بررسی کنید یا با پشتیبانی تماس بگیرید."
+
+#: includes/class-price-converter-woocommerce.php:584
+#: includes/class-price-converter-woocommerce.php:778
+#: includes/class-price-converter-woocommerce.php:907
+#: includes/class-price-converter-woocommerce.php:1120
+msgid "No Interest"
+msgstr ""
+
+#: includes/class-price-converter.php:436
+msgid "No URL provided"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:798
+msgid "None"
+msgstr "هیچ‌کدام"
+
+#: includes/class-price-converter-admin.php:222
+msgid "None Set"
+msgstr "تنظیم نشده"
+
+#: includes/class-price-converter-admin.php:217
+msgid "Not Configured"
+msgstr "پیکربندی نشده"
+
+#: includes/class-price-converter-woocommerce.php:588
+msgid ""
+"Override the default interest settings for this product. Select \"Use "
+"Default Settings\" to inherit from general settings."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:530
+msgid "Page to fetch price from (expects price text)."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:1100
+msgid "Page to fetch price from for this variation."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:799
+msgid "Percent"
+msgstr "درصد"
+
+#: includes/class-price-converter-woocommerce.php:585
+#: includes/class-price-converter-woocommerce.php:779
+#: includes/class-price-converter-woocommerce.php:908
+#: includes/class-price-converter-woocommerce.php:1121
+msgid "Percentage (%)"
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:675
+msgid "Please enter a source URL or set the price manually."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:597
+msgid "Popular Examples:"
+msgstr "مثال‌های محبوب:"
+
+#: includes/class-price-converter-admin.php:228
+msgid "Price Conversion:"
+msgstr "تبدیل قیمت:"
+
+#: includes/class-price-converter-admin.php:26
+msgid "Price Converter"
+msgstr "تبدیل قیمت"
+
+#: price-converter-plugin.php:84
+msgid "Price Converter Plugin failed to initialize: "
+msgstr ""
+
+#: includes/class-price-converter-admin.php:25
+#: includes/class-price-converter-woocommerce.php:459
+#: includes/class-price-converter-woocommerce.php:731
+#: includes/class-price-converter-woocommerce.php:852
+#: includes/class-price-converter-woocommerce.php:1036
+msgid "Price Converter Settings"
+msgstr "تنظیمات تبدیل قیمت"
+
+#. Name of the plugin
+msgid "Price Converter to Iranian Toman"
+msgstr ""
+
+#: price-converter-plugin.php:34
+msgid ""
+"Price Converter to Iranian Toman requires WooCommerce to be installed and "
+"activated."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:141
+msgid "Price fetched successfully"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:54
+msgid "Price Update Interval"
+msgstr "فاصله زمانی به‌روزرسانی قیمت"
+
+#: includes/class-price-converter-admin.php:176
+msgid "Quick Actions"
+msgstr "عملیات سریع"
+
+#: includes/class-price-converter-woocommerce.php:488
+#: includes/class-price-converter-woocommerce.php:1062
+msgid "Russian Ruble (RUB)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:167
+msgid "Save Settings"
+msgstr "ذخیره تنظیمات"
+
+#: includes/class-price-converter-admin.php:843
+msgid "Select how often prices should be updated from external sources."
+msgstr ""
+
+#: includes/class-price-converter-admin.php:805
+msgid "Select interest mode to apply on converted prices."
+msgstr "حالت بهره را برای اعمال روی قیمت‌های تبدیل شده انتخاب کنید."
+
+#: includes/class-price-converter-woocommerce.php:1089
+msgid "Select the base currency for this variation."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:1124
+msgid ""
+"Set interest mode for this variation. \"Inherit from Product\" uses the "
+"parent product settings."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:1132
+msgid ""
+"Set interest value for this variation. Leave empty to inherit from product."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:597
+msgid ""
+"Set the interest value for this product. Leave empty to use default settings."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:922
+msgid ""
+"Set the interest value for this variable. Leave empty to use default "
+"settings."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:469
+msgid ""
+"Set the product base price in the selected currency. It will be converted to "
+"Toman (IRT) for display."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:863
+msgid ""
+"Set the variable base price in the selected currency. It will be converted "
+"to Toman (IRT) for display."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:1044
+msgid "Set the variation base price in the selected currency."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:528
+#: includes/class-price-converter-woocommerce.php:1098
+msgid "Source URL (optional)"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:205
+msgid "Status Overview"
+msgstr "نمای کلی وضعیت"
+
+#: price-converter-plugin.php:50
+msgid "T"
+msgstr ""
+
+#: includes/class-price-converter-admin.php:273
+msgid "Test Fetch Price"
+msgstr "تست دریافت قیمت"
+
+#: includes/class-price-converter-admin.php:244
+msgid "Test Price Fetching"
+msgstr "تست دریافت قیمت"
+
+#: includes/class-price-converter-admin.php:283
+msgid "Test Results"
+msgstr "نتایج تست"
+
+#: includes/class-price-converter-admin.php:245
+msgid ""
+"Test the price fetching functionality with a URL to ensure everything is "
+"working correctly."
+msgstr ""
+"عملکرد دریافت قیمت را با URL تست کنید تا مطمئن شوید همه چیز درست کار می‌کند."
+
+#: includes/class-price-converter-admin.php:252
+msgid "Test URL"
+msgstr "URL تست"
+
+#: includes/class-price-converter-woocommerce.php:1158
+msgid ""
+"This shows the converted price in Iranian Toman (IRT) for this variation."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:615
+#: includes/class-price-converter-woocommerce.php:940
+msgid ""
+"This shows the converted price in Iranian Toman (IRT). The conversion uses "
+"the current exchange rate for the selected currency and product-specific "
+"interest settings."
+msgstr ""
+
+#: includes/class-price-converter-woocommerce.php:485
+#: includes/class-price-converter-woocommerce.php:1059
+msgid "Turkish Lira (TRY)"
+msgstr "لیر ترکیه"
+
+#: includes/class-price-converter-woocommerce.php:484
+#: includes/class-price-converter-woocommerce.php:1058
+msgid "UAE Dirham (AED)"
+msgstr "درهم امارات"
+
+#: includes/class-price-converter-admin.php:233
+msgid "Update Interval:"
+msgstr "فاصله به‌روزرسانی:"
+
+#: includes/class-price-converter-woocommerce.php:479
+#: includes/class-price-converter-woocommerce.php:1053
+msgid "US Dollar (USD)"
+msgstr "دلار امریکا(USD)"
+
+#: includes/class-price-converter-woocommerce.php:777
+#: includes/class-price-converter-woocommerce.php:906
+msgid "Use Default"
+msgstr "استفاده از پیشفرض"
+
+#: includes/class-price-converter-woocommerce.php:583
+msgid "Use Default Settings"
+msgstr "استفاده از تنظیمات پیشفرض"
+
+#: includes/class-price-converter-admin.php:837
+#: includes/class-price-converter-admin.php:857
+msgid "Weekly"
+msgstr "هفتگی"
+
+#: includes/class-price-converter-admin.php:184
+msgid "WooCommerce Settings"
+msgstr "تنظیمات WooCommerce"

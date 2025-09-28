@@ -1,0 +1,243 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Price Converter Plugin\n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: 2024-01-01 12:00+0000\n"
+"Last-Translator: Emjay Sepahi <emjay@emjaysepahi.com>\n"
+"Language-Team: Persian\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Price Converter Settings"
+msgstr "تنظیمات تبدیل قیمت"
+
+msgid "Price Converter"
+msgstr "تبدیل قیمت"
+
+msgid "Configure price conversion settings and manage custom currencies for your WooCommerce store."
+msgstr "تنظیمات تبدیل قیمت را پیکربندی کنید و ارزهای سفارشی را برای فروشگاه WooCommerce خود مدیریت کنید."
+
+msgid "General Settings"
+msgstr "تنظیمات عمومی"
+
+msgid "Configure the price converter settings below."
+msgstr "تنظیمات تبدیل قیمت را در زیر پیکربندی کنید."
+
+msgid "Exchange Rate (USD to IRT)"
+msgstr "نرخ ارز (دلار به تومان)"
+
+msgid "Fallback USD→IRT when API/rates are unavailable."
+msgstr "نرخ ارز پیش‌فرض دلار به تومان زمانی که API/نرخ‌ها در دسترس نیست."
+
+msgid "Price Update Interval"
+msgstr "فاصله زمانی به‌روزرسانی قیمت"
+
+msgid "How often should the plugin update exchange rates from the API?"
+msgstr "پلاگین باید چند وقت یکبار نرخ‌های ارز را از API به‌روزرسانی کند؟"
+
+msgid "30 Minutes"
+msgstr "30 دقیقه"
+
+msgid "1 Hour"
+msgstr "1 ساعت"
+
+msgid "2 Hours"
+msgstr "2 ساعت"
+
+msgid "4 Hours"
+msgstr "4 ساعت"
+
+msgid "6 Hours"
+msgstr "6 ساعت"
+
+msgid "12 Hours"
+msgstr "12 ساعت"
+
+msgid "Daily"
+msgstr "روزانه"
+
+msgid "Weekly"
+msgstr "هفتگی"
+
+msgid "Monthly"
+msgstr "ماهانه"
+
+msgid "Custom Currency Rates (JSON)"
+msgstr "نرخ‌های ارز سفارشی (JSON)"
+
+msgid "JSON map of per-currency rates to IRT, used when API does not provide that currency."
+msgstr "نقشه JSON نرخ‌های ارز به تومان، زمانی استفاده می‌شود که API آن ارز را ارائه نمی‌دهد."
+
+msgid "Custom Currencies"
+msgstr "ارزهای سفارشی"
+
+msgid "Interest Mode"
+msgstr "حالت بهره"
+
+msgid "Select interest mode to apply on converted prices."
+msgstr "حالت بهره را برای اعمال روی قیمت‌های تبدیل شده انتخاب کنید."
+
+msgid "None"
+msgstr "هیچ‌کدام"
+
+msgid "Percent"
+msgstr "درصد"
+
+msgid "Fixed Amount (IRT)"
+msgstr "مبلغ ثابت (تومان)"
+
+msgid "Interest Value"
+msgstr "مقدار بهره"
+
+msgid "If Percent mode: value is percentage. If Fixed mode: value is IRT amount."
+msgstr "اگر حالت درصد: مقدار درصد است. اگر حالت ثابت: مقدار مبلغ تومان است."
+
+msgid "Navasan Web Service (optional)"
+msgstr "سرویس وب نوسان (اختیاری)"
+
+msgid "If you provide a Navasan API Key, the plugin will fetch USD→IRR (and others) and convert to IRT by removing one zero."
+msgstr "اگر کلید API نوسان را ارائه دهید، پلاگین USD→IRR (و سایرین) را دریافت کرده و با حذف یک صفر به IRT تبدیل می‌کند."
+
+msgid "API Key"
+msgstr "کلید API"
+
+msgid "Enter your Navasan API Key. If set, rates are fetched automatically."
+msgstr "کلید API نوسان خود را وارد کنید. اگر تنظیم شود، نرخ‌ها به طور خودکار دریافت می‌شوند."
+
+msgid "Default Item (USD source)"
+msgstr "آیتم پیش‌فرض (منبع دلار)"
+
+msgid "Default USD item to use when mapping fails."
+msgstr "آیتم دلار پیش‌فرض برای استفاده زمانی که نقشه‌برداری شکست می‌خورد."
+
+msgid "USD Tehran (Sell)"
+msgstr "دلار تهران (فروش)"
+
+msgid "USD Tehran (Buy)"
+msgstr "دلار تهران (خرید)"
+
+msgid "USD Herat (Cash Buy)"
+msgstr "دلار هرات (خرید نقدی)"
+
+msgid "USD Herat (Cash Sell)"
+msgstr "دلار هرات (فروش نقدی)"
+
+msgid "Fallback Mode"
+msgstr "حالت پشتیبان"
+
+msgid "Choose whether to enable or disable the fallback mode for price conversion."
+msgstr "انتخاب کنید که آیا حالت پشتیبان برای تبدیل قیمت فعال یا غیرفعال باشد."
+
+msgid "Enabled (Price conversion will try to fetch rates and convert)"
+msgstr "فعال (تبدیل قیمت سعی می‌کند نرخ‌ها را دریافت کرده و تبدیل کند)"
+
+msgid "Disabled (Price conversion will use the default exchange rate)"
+msgstr "غیرفعال (تبدیل قیمت از نرخ ارز پیش‌فرض استفاده می‌کند)"
+
+msgid "Save Settings"
+msgstr "ذخیره تنظیمات"
+
+msgid "Quick Actions"
+msgstr "عملیات سریع"
+
+msgid "Manage Products"
+msgstr "مدیریت محصولات"
+
+msgid "WooCommerce Settings"
+msgstr "تنظیمات WooCommerce"
+
+msgid "Help & Support"
+msgstr "راهنما و پشتیبانی"
+
+msgid "Need help? Check our documentation or contact support."
+msgstr "نیاز به کمک دارید؟ مستندات ما را بررسی کنید یا با پشتیبانی تماس بگیرید."
+
+msgid "Documentation"
+msgstr "مستندات"
+
+msgid "Status Overview"
+msgstr "نمای کلی وضعیت"
+
+msgid "API Connection:"
+msgstr "اتصال API:"
+
+msgid "Connected"
+msgstr "متصل"
+
+msgid "Not Configured"
+msgstr "پیکربندی نشده"
+
+msgid "Custom Currencies:"
+msgstr "ارزهای سفارشی:"
+
+msgid "None Set"
+msgstr "تنظیم نشده"
+
+msgid "Price Conversion:"
+msgstr "تبدیل قیمت:"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Update Interval:"
+msgstr "فاصله به‌روزرسانی:"
+
+msgid "Test Price Fetching"
+msgstr "تست دریافت قیمت"
+
+msgid "Test the price fetching functionality with a URL to ensure everything is working correctly."
+msgstr "عملکرد دریافت قیمت را با URL تست کنید تا مطمئن شوید همه چیز درست کار می‌کند."
+
+msgid "Test URL"
+msgstr "URL تست"
+
+msgid "Enter a URL to test price fetching"
+msgstr "URL را برای تست دریافت قیمت وارد کنید"
+
+msgid "CSS Selector or data-qa (Optional)"
+msgstr "انتخابگر CSS یا data-qa (اختیاری)"
+
+msgid "CSS selector or data-qa attribute for price extraction"
+msgstr "انتخابگر CSS یا ویژگی data-qa برای استخراج قیمت"
+
+msgid "Test Fetch Price"
+msgstr "تست دریافت قیمت"
+
+msgid "Convert to IRT"
+msgstr "تبدیل به تومان"
+
+msgid "Test Results"
+msgstr "نتایج تست"
+
+msgid "Current Custom Currencies"
+msgstr "ارزهای سفارشی فعلی"
+
+msgid "Error Reading Custom Currencies"
+msgstr "خطا در خواندن ارزهای سفارشی"
+
+msgid "How to Use"
+msgstr "نحوه استفاده"
+
+msgid "Add custom currencies with their exchange rates to IRT. Format: {\"CURRENCY_CODE\": EXCHANGE_RATE}. Example: {\"BTC\": 1500000000} means 1 BTC = 1,500,000,000 IRT."
+msgstr "ارزهای سفارشی را با نرخ‌های ارز آنها به تومان اضافه کنید. فرمت: {\"کد_ارز\": نرخ_ارز}. مثال: {\"BTC\": 1500000000} به معنای 1 BTC = 1,500,000,000 تومان است."
+
+msgid "Popular Examples:"
+msgstr "مثال‌های محبوب:"
+
+msgid "Bitcoin"
+msgstr "بیت‌کوین"
+
+msgid "Ethereum"
+msgstr "اتریوم"
+
+msgid "Gold per gram"
+msgstr "طلا به ازای هر گرم"
+
+msgid "Silver per gram"
+msgstr "نقره به ازای هر گرم"
+
+msgid "All rights reserved"
+msgstr "تمامی حقوق محفوظ است"
